@@ -1,7 +1,15 @@
 {
-  "name": "contracts",
+  "name": "@repo/contracts",
   "version": "1.0.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.ts"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.0.9",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.3",
