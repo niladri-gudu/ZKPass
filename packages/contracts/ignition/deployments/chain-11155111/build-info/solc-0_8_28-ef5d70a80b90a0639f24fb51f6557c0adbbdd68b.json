@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-ef5d70a80b90a0639f24fb51f6557c0adbbdd68b",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/ZKPassPaymaster.sol": "project/contracts/ZKPassPaymaster.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/ZKPassPaymaster.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.24;\r\n\r\ncontract ZKPassPaymaster {\r\n    address public owner;\r\n\r\n    event Sponsored(address indexed user);\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n    }\r\n\r\n    receive() external payable {}\r\n\r\n    function sponsor(address user) external {\r\n        emit Sponsored(user);\r\n    }\r\n\r\n    function withdraw() external {\r\n        require (msg.sender == owner, \"Not owner\");\r\n\r\n        uint256 balance = address(this).balance;\r\n\r\n        (bool success, ) = payable(owner).call{value: balance}(\"\");\r\n        require(success, \"Withdrawal failed\");\r\n    }\r\n}"
+      }
+    }
+  }
+}
