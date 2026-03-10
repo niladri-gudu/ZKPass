@@ -13,17 +13,40 @@ datasource db {
   provider = "postgresql"
 }
 
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-  posts Post[]
-} 
-model Post { 
-  id        Int     @id @default(autoincrement()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id]) 
+model Campaign {
+    id                  String          @id @default(uuid())
+    name                String
+    contractAddress     String          @unique
+    merkleRoot          String
+    chainId             Int
+    createdAt           DateTime        @default(now())
+
+    allowlist           AllowList[]
+    claims              Claim[]
+}
+
+model AllowList {
+    id                  String          @id @default(uuid())
+    campaignId          String
+    wallet              String
+
+    campaign            Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+    @@unique([campaignId, wallet])
+    @@index([wallet])
+    @@index([campaignId])
+}
+
+model Claim {
+    id                  String          @id @default(uuid())
+    campaignId          String
+    wallet              String
+    txHash              String
+    claimedAt           DateTime        @default(now())
+
+    campaign            Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+    @@unique([campaignId, wallet])
+    @@index([wallet])
+    @@index([campaignId])
 }
