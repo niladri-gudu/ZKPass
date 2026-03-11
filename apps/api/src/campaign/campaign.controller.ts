@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CampaignService } from './campaign.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 
@@ -14,5 +14,10 @@ export class CampaignController {
   @Get()
   findAll() {
     return this.campaignService.findAll();
+  }
+
+  @Get(':id/proof/:wallet')
+  getProof(@Param('id') campaignId: string, @Param('wallet') wallet: string) {
+    return this.campaignService.getProof(campaignId, wallet);
   }
 }

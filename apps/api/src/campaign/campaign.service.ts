@@ -16,6 +16,9 @@ import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { decodeEventLog } from 'viem';
 import { sepolia } from 'viem/chains';
 
+import { MerkleTree } from 'merkletreejs';
+import keccak256 from 'keccak256';
+
 @Injectable()
 export class CampaignService {
   constructor(
@@ -91,5 +94,33 @@ export class CampaignService {
 
   async findAll() {
     return this.prisma.campaign.findMany();
+  }
+
+  async getProof(campaignId: string, wallet: string) {
+    const normalizedWallet = wallet.trim().toLowerCase();
+
+    const campaign = await this.prisma.campaign.findUnique({
+      where: { id: campaignId },
+      include: { allowlist: true },
+    });
+
+    if (!campaign) {
+      throw new Error('Campaign not found');
+    }
+
+    const addresses = campaign.allowlist.map((entry) => entry.wallet);
+
+    const leaves = addresses.map((addr) => keccak256(addr));
+
+    const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
+
+    const leaf = keccak256(normalizedWallet);
+
+    const proof = tree.getHexProof(leaf);
+
+    return {
+      proof,
+      root: campaign.merkleRoot,
+    };
   }
 }
