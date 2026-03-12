@@ -8,6 +8,7 @@ import { CampaignModule } from './campaign/campaign.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ClaimModule } from './claim/claim.module';
+import { IndexerModule } from './indexer/indexer.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ClaimModule } from './claim/claim.module';
     BlockchainModule,
     PrismaModule,
     ClaimModule,
+    IndexerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
