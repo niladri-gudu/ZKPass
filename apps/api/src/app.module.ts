@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { CampaignModule } from './campaign/campaign.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ClaimModule } from './claim/claim.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CampaignModule,
     BlockchainModule,
     PrismaModule,
+    ClaimModule,
   ],
   controllers: [AppController],
   providers: [AppService],
