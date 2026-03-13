@@ -14,6 +14,7 @@
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.21",
+    "axios": "^1.13.6",
     "next": "16.1.5",
     "react": "^19.2.0",
     "react-dom": "^19.1.0",

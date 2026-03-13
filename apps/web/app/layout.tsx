@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
-import { Web3Provider } from "../components/providers/Web3Provider";
+import { Web3Provider } from "./providers";
 
 const geist = Geist({ subsets: ["latin"] });
 
