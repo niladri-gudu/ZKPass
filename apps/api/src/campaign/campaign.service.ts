@@ -121,6 +121,7 @@ export class CampaignService {
     return {
       proof,
       root: campaign.merkleRoot,
+      contractAddress: campaign.contractAddress,
     };
   }
 }

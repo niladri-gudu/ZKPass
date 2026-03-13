@@ -33,6 +33,27 @@ contract ZKPass {
         emit Claimed(msg.sender, block.timestamp);
     }
 
+    function claimFor(
+      address user,
+      bytes32[] calldata proof
+    ) external {
+      require(!claimed[user], "Already claimed");
+
+      bytes32 leaf = keccak256(abi.encodePacked(user));
+
+      bool valid = MerkleProof.verify(
+          proof,
+          merkleRoot,
+          leaf
+      );
+
+      require(valid, "Invalid proof");
+
+      claimed[user] = true;
+
+      emit Claimed(user, block.timestamp);
+    }
+
     function isEligible(address user, bytes32[] calldata proof)
         external
         view
