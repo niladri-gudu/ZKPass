@@ -11,9 +11,11 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@rainbow-me/rainbowkit": "^2.2.10",
-    "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.21",
+    "@repo/ui": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/contracts": "workspace:*",
+    "@rainbow-me/rainbowkit": "^2.2.10",
     "axios": "^1.13.6",
     "next": "16.1.5",
     "react": "^19.2.0",
