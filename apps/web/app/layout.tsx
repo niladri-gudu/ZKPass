@@ -1,7 +1,8 @@
-import "@repo/ui/styles.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import "@rainbow-me/rainbowkit/styles.css";
+import { Web3Provider } from "../components/providers/Web3Provider";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -17,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={geist.className}>{children}</body>
+      <body className={geist.className}>
+        <Web3Provider>{children}</Web3Provider>
+      </body>
     </html>
   );
 }
