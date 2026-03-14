@@ -9,6 +9,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ClaimModule } from './claim/claim.module';
 import { IndexerModule } from './indexer/indexer.module';
+import { SponsorModule } from './sponsor/sponsor.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { IndexerModule } from './indexer/indexer.module';
     PrismaModule,
     ClaimModule,
     IndexerModule,
+    SponsorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
