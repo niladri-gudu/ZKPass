@@ -1,17 +1,17 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import {
-  useWriteContract,
-  useAccount,
-  useWaitForTransactionReceipt,
-} from "wagmi";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 import { useProof } from "../../../hooks/useProof";
 import { useClaimStatus } from "../../../hooks/useClaimStatus";
 
+import { sponsorClaim } from "../../../lib/api";
+
 import { ZKPASS_ABI } from "@repo/contracts";
+
+import { useState } from "react";
 
 export default function CampaignPage() {
   const params = useParams();
@@ -29,26 +29,30 @@ export default function CampaignPage() {
     address,
   );
 
-  const { writeContract, data: txHash, isPending } = useWriteContract();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const { isSuccess: txConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
-  });
+  const handleClaim = async () => {
+    if (!address) return;
 
-  const handleClaim = () => {
-    if (!proofData || claimStatus?.claimed) return;
+    setLoading(true);
 
-    writeContract({
-      address: proofData.contractAddress,
-      abi: ZKPASS_ABI,
-      functionName: "claim",
-      args: [proofData.proof],
-    });
+    try {
+      const res = await sponsorClaim(campaignId, address);
+
+      if (res.sponsored) {
+        setSuccess(true);
+        refetchClaimStatus();
+      } else {
+        alert(res.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Claim failed");
+    }
+
+    setLoading(false)
   };
-
-  if (txConfirmed) {
-    refetchClaimStatus();
-  }
 
   return (
     <div className="max-w-xl mx-auto p-10">
@@ -73,14 +77,14 @@ export default function CampaignPage() {
       {isConnected && !claimStatus?.claimed && proofData && (
         <button
           onClick={handleClaim}
-          disabled={isPending}
+          disabled={loading}
           className="mt-4 px-6 py-3 bg-black text-white rounded-lg"
         >
-          {isPending ? "Claiming..." : "Claim Access Pass"}
-        </button>
+          {loading ? "Claiming..." : "Claim Access Pass (Gasless)"}
+        </button> 
       )}
 
-      {txConfirmed && (
+      {success && (
         <p className="text-green-600 mt-4">🎉 Claim successful!</p>
       )}
     </div>

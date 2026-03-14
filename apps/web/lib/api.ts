@@ -31,3 +31,17 @@ export async function fetchClaimStatus(campaignId: string, wallet: string) {
     throw error;
   }
 }
+
+export async function sponsorClaim(campaignId: string, wallet: string) {
+  try {
+    const res = await api.post("/sponsor", {
+      campaignId,
+      wallet,
+    });
+
+    return res.data;
+  } catch (error) {
+    console.error("Failed to sponsor claim: ", error)
+    throw error
+  }
+}
