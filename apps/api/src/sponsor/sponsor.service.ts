@@ -1,7 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-import { createWalletClient, encodePacked, http } from 'viem';
+import {
+  createWalletClient,
+  createPublicClient,
+  encodePacked,
+  http,
+} from 'viem';
+
 import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 
@@ -20,6 +26,11 @@ export class SponsorService {
 
   relayer = createWalletClient({
     account: this.account,
+    chain: sepolia,
+    transport: http(process.env.RPC_URL),
+  });
+
+  publicClient = createPublicClient({
     chain: sepolia,
     transport: http(process.env.RPC_URL),
   });
@@ -46,7 +57,24 @@ export class SponsorService {
     });
 
     if (existing) {
-      throw new BadRequestException('Already claimed');
+      return {
+        sponsored: false,
+        message: 'Already claimed',
+      };
+    }
+
+    const alreadyClaimed = await this.publicClient.readContract({
+      address: campaign.contractAddress as `0x${string}`,
+      abi: ZKPASS_ABI,
+      functionName: 'claimed',
+      args: [wallet],
+    });
+
+    if (alreadyClaimed) {
+      return {
+        sponsored: false,
+        message: 'Already claimed',
+      };
     }
 
     const addresses = campaign.allowlist.map((a) => a.wallet);
@@ -59,16 +87,34 @@ export class SponsorService {
 
     const proof = tree.getHexProof(leaf);
 
-    const txHash = await this.relayer.writeContract({
-      address: campaign.contractAddress as `0x${string}`,
-      abi: ZKPASS_ABI,
-      functionName: 'claimFor',
-      args: [wallet, proof],
-    });
+    try {
+      const txHash = await this.relayer.writeContract({
+        address: campaign.contractAddress as `0x${string}`,
+        abi: ZKPASS_ABI,
+        functionName: 'claimFor',
+        args: [wallet, proof],
+      });
 
-    return {
-      sponsored: true,
-      txHash,
-    };
+      return {
+        sponsored: true,
+        txHash,
+      };
+    } catch (error: any) {
+      if (error.shortMessage?.includes('Already claimed')) {
+        return {
+          sponsored: false,
+          message: 'Already claimed',
+        };
+      }
+
+      if (error.shortMessage?.includes('Invalid proof')) {
+        return {
+          sponsored: false,
+          message: 'Wallet not eligible for this campaign',
+        };
+      }
+
+      throw error;
+    }
   }
 }
