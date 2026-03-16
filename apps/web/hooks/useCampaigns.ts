@@ -7,5 +7,6 @@ export function useCampaigns() {
   return useQuery({
     queryKey: ["campaigns"],
     queryFn: fetchCampaigns,
+    staleTime: 5 * 60 * 1000,
   });
 }

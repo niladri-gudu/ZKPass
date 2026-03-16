@@ -1,8 +1,9 @@
 import "./globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import "@rainbow-me/rainbowkit/styles.css";
 import { Web3Provider } from "./providers";
+import Navbar from "../components/Navbar";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -19,7 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={geist.className}>
-        <Web3Provider>{children}</Web3Provider>
+        <Web3Provider>
+
+          <Navbar />
+
+          {children}
+        </Web3Provider>
       </body>
     </html>
   );

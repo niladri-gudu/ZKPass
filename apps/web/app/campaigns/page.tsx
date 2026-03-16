@@ -1,13 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Link from "next/link";
 import { useCampaigns } from "../../hooks/useCampaigns";
+import LoadingCard from "../../components/LoadingCard";
+import CampaignCard from "../../components/CampaignCard";
 
 export default function CampaignsPage() {
   const { data: campaigns, isLoading, error } = useCampaigns();
 
   if (isLoading) {
-    return <div className="p-10 text-center">Loading campaigns...</div>;
+    return (
+      <div className="max-w-4xl mx-auto p-10 grid gap-6">
+        <LoadingCard />
+        <LoadingCard />
+        <LoadingCard />
+      </div>
+    );
   }
 
   if (error) {
@@ -24,19 +32,7 @@ export default function CampaignsPage() {
 
       <div className="grid gap-6">
         {campaigns?.map((campaign: any) => (
-          <Link
-            key={campaign.id}
-            href={`/campaigns/${campaign.id}`}
-            className="border rounded-xl p-6 hover:bg-gray-50 transition"
-          >
-            <h2 className="text-xl font-semibold">{campaign.name}</h2>
-
-            <p className="text-sm text-gray-500 mt-2">
-              Contract: {campaign.contractAddress}
-            </p>
-
-            <p className="text-sm text-gray-500">Chain: {campaign.chainId}</p>
-          </Link>
+          <CampaignCard key={campaign.id} campaign={campaign} />
         ))}
       </div>
     </div>
