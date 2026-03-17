@@ -1,3 +1,4 @@
+import { ProofResponse } from "../types/api";
 import { api } from "./axios";
 
 export async function fetchCampaigns() {
@@ -10,10 +11,22 @@ export async function fetchCampaigns() {
   }
 }
 
-export async function fetchProof(campaignId: string, wallet: string) {
+export async function fetchCampaign(id: string) {
+  try {
+    const res = await api.get(`/campaign/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch campaign details:", error);
+    throw error;
+  }
+}
+
+export async function fetchProof(
+  campaignId: string,
+  wallet: string,
+): Promise<ProofResponse> {
   try {
     const res = await api.get(`/campaign/${campaignId}/proof/${wallet}`);
-
     return res.data;
   } catch (error) {
     console.error("Failed to fetch proof:", error);
@@ -41,8 +54,8 @@ export async function sponsorClaim(campaignId: string, wallet: string) {
 
     return res.data;
   } catch (error) {
-    console.error("Failed to sponsor claim: ", error)
-    throw error
+    console.error("Failed to sponsor claim: ", error);
+    throw error;
   }
 }
 

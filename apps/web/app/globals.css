@@ -1,26 +1,35 @@
 @import "tailwindcss";
-@import "@repo/tailwind-config";
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --bg-dark: #0a0a0a;
+  --card-dark: #121212;
+  --border-dark: #1f1f1f;
+  --text-dim: #a1a1aa;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--bg-dark);
+  color: #ededed;
+  /* Very subtle grid—barely visible, adds texture */
+  background-image: radial-gradient(#161616 1px, transparent 1px);
+  background-size: 24px 24px;
+  min-height: 100vh;
+}
+
+/* Fixes the "off" look of cards */
+.custom-card {
+  background-color: var(--card-dark);
+  border: 1px solid var(--border-dark);
+  border-radius: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.custom-card:hover {
+  border-color: #333;
+}
+
+/* High-end typography */
+h1, h2, h3 {
+  letter-spacing: -0.04em;
+  font-weight: 800;
 }

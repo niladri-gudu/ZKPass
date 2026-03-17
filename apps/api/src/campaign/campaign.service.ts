@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 
@@ -29,13 +30,13 @@ export class CampaignService {
   async createCampaign(dto: CreateCampaignDto) {
     const { name, description, addresses } = dto;
 
-    const walletClient = this.blockchain.walletClient;
-
     const normalized = [
       ...new Set(addresses.map((addr) => addr.trim().toLowerCase())),
     ];
 
     const { root } = generateMerkleTree(normalized);
+
+    const walletClient = this.blockchain.walletClient;
 
     const hash = await walletClient.writeContract({
       address: FACTORY_ADDRESS,
@@ -48,6 +49,7 @@ export class CampaignService {
       await this.blockchain.publicClient.waitForTransactionReceipt({
         hash,
       });
+
     let contractAddress: `0x${string}` | null = null;
 
     for (const log of receipt.logs) {
@@ -60,7 +62,6 @@ export class CampaignService {
 
         if (decoded.eventName === 'CampaignCreated') {
           const args = decoded.args as unknown as { campaign: `0x${string}` };
-
           contractAddress = args.campaign;
         }
       } catch {
@@ -97,6 +98,18 @@ export class CampaignService {
     return this.prisma.campaign.findMany();
   }
 
+  async getCampaignById(id: string) {
+    const campaign = await this.prisma.campaign.findUnique({
+      where: { id },
+    });
+
+    if (!campaign) {
+      throw new BadRequestException('Campaign not found');
+    }
+
+    return campaign;
+  }
+
   async getProof(campaignId: string, wallet: string) {
     const normalizedWallet = wallet.trim().toLowerCase();
 
@@ -109,17 +122,19 @@ export class CampaignService {
       throw new Error('Campaign not found');
     }
 
-    const addresses = campaign.allowlist.map((entry) => entry.wallet);
+    const addresses = campaign.allowlist.map((a) => a.wallet);
 
-    const leaves = addresses.map((addr) => keccak256(addr));
+    if (!addresses.includes(normalizedWallet)) {
+      return { eligible: false };
+    }
 
-    const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
+    const { tree } = generateMerkleTree(addresses);
 
     const leaf = keccak256(normalizedWallet);
-
     const proof = tree.getHexProof(leaf);
 
     return {
+      eligible: true,
       proof,
       root: campaign.merkleRoot,
       contractAddress: campaign.contractAddress,

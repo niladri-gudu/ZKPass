@@ -7,19 +7,9 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClaimDto } from './dto/create-claim.dto';
 
-import { createPublicClient, http } from 'viem';
-import { sepolia } from 'viem/chains';
-
-import { ZKPASS_ABI } from '@repo/contracts';
-
 @Injectable()
 export class ClaimService {
   constructor(private prisma: PrismaService) {}
-
-  client = createPublicClient({
-    chain: sepolia,
-    transport: http(process.env.RPC_URL),
-  });
 
   async createClaim(dto: CreateClaimDto) {
     const wallet = dto.wallet.toLowerCase();
@@ -43,17 +33,6 @@ export class ClaimService {
 
     if (existing) {
       throw new BadRequestException('Already claimed');
-    }
-
-    const claimed = await this.client.readContract({
-      address: campaign.contractAddress as `0x${string}`,
-      abi: ZKPASS_ABI,
-      functionName: 'claimed',
-      args: [wallet],
-    });
-
-    if (!claimed) {
-      throw new BadRequestException('Claim not verified on-chain');
     }
 
     const claim = await this.prisma.claim.create({

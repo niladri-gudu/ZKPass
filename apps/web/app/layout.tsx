@@ -19,15 +19,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={geist.className}>
+    <html lang="en" className="dark">
+      {" "}
+      <body className={`${geist.className} antialiased`}>
         <Web3Provider>
-
           <Navbar />
-
-          <Toaster />          
-
-          {children}
+          <main className="min-h-screen pt-20">{children}</main>
+          <Toaster theme="dark" position="top-right" />
         </Web3Provider>
       </body>
     </html>

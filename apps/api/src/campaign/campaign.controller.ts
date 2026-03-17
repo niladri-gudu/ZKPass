@@ -20,4 +20,9 @@ export class CampaignController {
   getProof(@Param('id') campaignId: string, @Param('wallet') wallet: string) {
     return this.campaignService.getProof(campaignId, wallet);
   }
+
+  @Get(':id')
+  getCampaign(@Param('id') id: string) {
+    return this.campaignService.getCampaignById(id);
+  }
 }
