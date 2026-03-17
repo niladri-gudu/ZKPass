@@ -9,7 +9,9 @@ export default function CampaignCard({ campaign }: any) {
       href={`/campaigns/${campaign.id}`}
       className="border rounded-xl p-6 hover:shadow-md transition"
     >
-      <h2 className="text-lg font-semibold">{campaign.name}</h2>
+      <h1 className="text-2xl font-bold">{campaign.name}</h1>
+
+      <p className="text-gray-500 mt-2">{campaign.description}</p>
       <p className="text-sm text-gray-500 mt-2">
         Contract: {campaign.contractAddress.slice(0, 10)}...
       </p>

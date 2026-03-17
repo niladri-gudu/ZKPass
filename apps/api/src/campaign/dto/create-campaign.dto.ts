@@ -6,6 +6,10 @@ export class CreateCampaignDto {
   @IsNotEmpty()
   name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })

@@ -45,3 +45,13 @@ export async function sponsorClaim(campaignId: string, wallet: string) {
     throw error
   }
 }
+
+export async function fetchClaims(wallet: string) {
+  try {
+    const res = await api.get(`/claim/${wallet}`);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch claims:", error);
+    throw error;
+  }
+}

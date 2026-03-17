@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, BadRequestException } from '@nestjs/common';
@@ -96,5 +99,12 @@ export class ClaimService {
     });
 
     return { claimed };
+  }
+
+  async getClaims(wallet: string) {
+    return await this.prisma.claim.findMany({
+      where: { wallet: wallet.toLowerCase() },
+      include: { campaign: true },
+    });
   }
 }

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Web3Provider } from "./providers";
 import Navbar from "../components/Navbar";
+import { Toaster } from "sonner";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -23,6 +24,8 @@ export default function RootLayout({
         <Web3Provider>
 
           <Navbar />
+
+          <Toaster />          
 
           {children}
         </Web3Provider>

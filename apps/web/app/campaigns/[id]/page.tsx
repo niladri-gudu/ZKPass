@@ -2,16 +2,22 @@
 
 import { useParams } from "next/navigation";
 import { useAccount } from "wagmi";
+import { waitForTransactionReceipt } from "wagmi/actions";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
 
 import { useProof } from "../../../hooks/useProof";
 import { useClaimStatus } from "../../../hooks/useClaimStatus";
 import { sponsorClaim } from "../../../lib/api";
+import { toast } from "sonner";
+import { api } from "../../../lib/axios";
+import { config } from "../../../lib/config"
 
 export default function CampaignPage() {
   const params = useParams();
   const campaignId = params.id as string;
+
+  const [txHash, setTxHash] = useState<string | null>(null);
 
   const { address, isConnected } = useAccount();
 
@@ -33,14 +39,28 @@ export default function CampaignPage() {
     try {
       const res = await sponsorClaim(campaignId, address);
 
-      if (res.sponsored) {
-        setSuccess(true);
-        refetch();
-      } else {
-        alert(res.message);
+      if (!res.sponsored) {
+        toast.error(res.message);
+        return;
       }
-    } catch (error) {
-      alert("Claim failed");
+
+      setTxHash(res.txHash);
+
+      await waitForTransactionReceipt(config, {
+        hash: res.txHash,
+      });
+
+      await api.post("/claim", {
+        campaignId,
+        wallet: address,
+        txHash: res.txHash,
+      });
+
+      setSuccess(true);
+      refetch();
+      toast.success("Claim successful");
+    } catch {
+      toast.error("Claim failed");
     }
 
     setLoading(false);
@@ -80,7 +100,25 @@ export default function CampaignPage() {
           </button>
         )}
 
-        {success && <p className="text-green-600 mt-4">🎉 Claim successful</p>}
+        {success && txHash && (
+          <div className="mt-6 p-6 border rounded-xl bg-green-50">
+            <h3 className="text-lg font-semibold text-green-700">
+              🎉 Claim Successful
+            </h3>
+
+            <p className="text-sm text-gray-600 mt-2">
+              Your access pass has been claimed.
+            </p>
+
+            <a
+              href={`https://sepolia.etherscan.io/tx/${txHash}`}
+              target="_blank"
+              className="text-blue-600 underline text-sm mt-2 block"
+            >
+              View Transaction
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

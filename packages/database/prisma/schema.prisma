@@ -16,6 +16,7 @@ datasource db {
 model Campaign {
     id                  String          @id @default(uuid())
     name                String
+    description         String
     contractAddress     String          @unique
     merkleRoot          String
     chainId             Int

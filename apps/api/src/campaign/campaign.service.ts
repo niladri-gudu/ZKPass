@@ -27,7 +27,7 @@ export class CampaignService {
   ) {}
 
   async createCampaign(dto: CreateCampaignDto) {
-    const { name, addresses } = dto;
+    const { name, description, addresses } = dto;
 
     const walletClient = this.blockchain.walletClient;
 
@@ -75,6 +75,7 @@ export class CampaignService {
     const campaign = await this.prisma.campaign.create({
       data: {
         name,
+        description,
         contractAddress,
         merkleRoot: root,
         chainId: sepolia.id,

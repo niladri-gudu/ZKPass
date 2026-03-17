@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { ClaimService } from './claim.service';
 import { CreateClaimDto } from './dto/create-claim.dto';
@@ -17,5 +18,10 @@ export class ClaimController {
     @Param('wallet') wallet: string,
   ) {
     return this.claimService.getClaimStatus(campaignId, wallet);
+  }
+
+  @Get('claim/:wallet')
+  async getUserClaims(@Param('wallet') wallet: string) {
+    return this.claimService.getClaims(wallet);
   }
 }
