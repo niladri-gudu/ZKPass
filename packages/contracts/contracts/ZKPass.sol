@@ -37,6 +37,7 @@ contract ZKPass {
       address user,
       bytes32[] calldata proof
     ) external {
+      require(msg.sender == owner, "Not authorized");
       require(!claimed[user], "Already claimed");
 
       bytes32 leaf = keccak256(abi.encodePacked(user));
