@@ -58,26 +58,7 @@ export class ClaimService {
       },
     });
 
-    if (claim) {
-      return { claimed: true };
-    }
-
-    const campaign = await this.prisma.campaign.findUnique({
-      where: { id: campaignId },
-    });
-
-    if (!campaign) {
-      throw new BadRequestException('Campaign not found');
-    }
-
-    const claimed = await this.client.readContract({
-      address: campaign.contractAddress as `0x${string}`,
-      abi: ZKPASS_ABI,
-      functionName: 'claimed',
-      args: [wallet],
-    });
-
-    return { claimed };
+    return { claimed: !!claim };
   }
 
   async getClaims(wallet: string) {
