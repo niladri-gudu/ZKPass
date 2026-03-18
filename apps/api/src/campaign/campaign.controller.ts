@@ -25,4 +25,9 @@ export class CampaignController {
   getCampaign(@Param('id') id: string) {
     return this.campaignService.getCampaignById(id);
   }
+
+  @Get(':id/stats')
+  claim(@Param('id') id: string) {
+    return this.campaignService.getStats(id);
+  }
 }

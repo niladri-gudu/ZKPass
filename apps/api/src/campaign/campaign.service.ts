@@ -140,4 +140,31 @@ export class CampaignService {
       contractAddress: campaign.contractAddress,
     };
   }
+
+  async getStats(campaignId: string) {
+    const campaign = await this.prisma.campaign.findUnique({
+      where: { id: campaignId },
+    });
+
+    if (!campaign) {
+      throw new BadRequestException('Campaign not found');
+    }
+
+    const totalClaims = await this.prisma.claim.count({
+      where: { campaignId: campaignId },
+    });
+
+    const totalEligible = await this.prisma.allowList.count({
+      where: { campaignId },
+    });
+
+    const claimRate =
+      totalEligible === 0 ? 0 : (totalClaims / totalEligible) * 100;
+
+    return {
+      totalClaims,
+      totalEligible,
+      claimRate: Number(claimRate.toFixed(2)),
+    };
+  }
 }

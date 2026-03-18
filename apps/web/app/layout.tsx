@@ -20,7 +20,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      {" "}
       <body className={`${geist.className} antialiased`}>
         <Web3Provider>
           <Navbar />

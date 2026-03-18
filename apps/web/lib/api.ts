@@ -68,3 +68,13 @@ export async function fetchClaims(wallet: string) {
     throw error;
   }
 }
+
+export async function fetchCampaignStats(id: string) {
+  try {
+    const res = await api.get(`/campaign/${id}/stats`);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch campaign stats:", error);
+    throw error;
+  }
+}
