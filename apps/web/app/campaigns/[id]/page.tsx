@@ -45,7 +45,8 @@ export default function CampaignPage() {
     if (!address) return;
 
     setLoading(true);
-    const toastId = toast.loading("Processing sponsored claim...");
+
+    const toastId = toast.loading("Generating proof...");
 
     try {
       const res = await sponsorClaim(campaignId, address);
@@ -56,7 +57,11 @@ export default function CampaignPage() {
         return;
       }
 
+      toast.loading("Sending transaction...", { id: toastId });
+
       setTxHash(res.txHash);
+
+      toast.loading("Waiting for confirmation...", { id: toastId });
 
       await waitForTransactionReceipt(config, {
         hash: res.txHash,
@@ -71,9 +76,7 @@ export default function CampaignPage() {
       setSuccess(true);
       refetch();
 
-      toast.success("Gas fees covered by Paymaster", {
-        id: toastId,
-      });
+      toast.success("Claim successful!", { id: toastId });
     } catch (err) {
       console.error(err);
       toast.error("Claim failed", { id: toastId });
@@ -205,8 +208,8 @@ export default function CampaignPage() {
                   <button
                     onClick={handleClaim}
                     disabled={loading}
-                    className="w-full py-4 bg-white text-black rounded-xl font-bold flex items-center justify-center gap-2"
-                  >
+                    className="w-full py-4 bg-white cursor-pointer text-black rounded-xl font-bold flex items-center justify-center gap-2"
+                    >
                     <Shield size={18} />
                     {loading ? "Waiting..." : "Claim Access Pass"}
                     {!loading && <ArrowRight size={18} />}
@@ -232,5 +235,5 @@ export default function CampaignPage() {
         </div>
       </div>
     </div>
-    );
+  );
 }
