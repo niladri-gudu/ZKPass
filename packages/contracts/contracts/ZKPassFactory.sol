@@ -27,8 +27,6 @@ contract ZKPassFactory {
         external 
         returns (address)
     {
-        require (msg.sender == owner, "Not owner");
-
         ZKPass pass = new ZKPass(
             merkleRoot, 
             msg.sender
