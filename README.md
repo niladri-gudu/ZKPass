@@ -2,7 +2,6 @@
 
 > **Gasless on-chain access passes, built from scratch.** Create allowlist campaigns, verify eligibility with Merkle proofs, and claim passes with zero gas fees — powered by a backend relayer.
 
-🔴 **Live App** → [zkpass.niladri.app](https://zkpass.niladri.app)  
 💻 **Project 3/6 of my [6 Projects in 60 Days](https://twitter.com/dev_niladri) challenge**  
 ← [Project 2: LendX](https://github.com/niladri-gudu/LendX)
 
